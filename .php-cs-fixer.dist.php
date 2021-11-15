@@ -2,7 +2,7 @@
 
 $finder = (new PhpCsFixer\Finder())
     ->in(__DIR__)
-    ->exclude('var')
+    ->exclude(['var'])
 ;
 
 return (new PhpCsFixer\Config())
@@ -10,4 +10,5 @@ return (new PhpCsFixer\Config())
         '@Symfony' => true,
     ])
     ->setFinder($finder)
+    ->setCacheFile('.php-cs-fixer.cache')
 ;
