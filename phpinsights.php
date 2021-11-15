@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use NunoMaduro\PhpInsights\Domain\Insights\CyclomaticComplexityIsHigh;
+use NunoMaduro\PhpInsights\Domain\Insights\ForbiddenNormalClasses;
+use NunoMaduro\PhpInsights\Domain\Sniffs\ForbiddenSetterSniff;
 use PHP_CodeSniffer\Standards\Generic\Sniffs\Files\LineLengthSniff;
 
 return [
@@ -65,6 +67,16 @@ return [
     ],
 
     'config' => [
+        ForbiddenSetterSniff::class => [
+        'exclude' => [
+            'src/Entity/User',
+        ],
+    ],
+        ForbiddenNormalClasses::class => [
+            'exclude' => [
+                'src/Entity/User',
+            ],
+        ],
         LineLengthSniff::class => [
             'lineLimit' => 120,
             'absoluteLineLimit' => 120,
