@@ -26,6 +26,7 @@ install:
 	rm -rf .env.*.local-e
 	composer install
 	make prepare env=$(env)
+	php bin/console lexik:jwt:generate-keypair --overwrite --quiet --env $(env)
 composer:
 	composer valid
 
