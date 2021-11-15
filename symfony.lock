@@ -198,6 +198,9 @@
     "phpunit/php-file-iterator": {
         "version": "3.0.5"
     },
+    "phpunit/php-timer": {
+        "version": "5.0.3"
+    },
     "psr/cache": {
         "version": "2.0.0"
     },
@@ -221,6 +224,9 @@
     },
     "sebastian/cli-parser": {
         "version": "1.0.1"
+    },
+    "sebastian/phpcpd": {
+        "version": "6.0.3"
     },
     "sebastian/version": {
         "version": "3.0.2"

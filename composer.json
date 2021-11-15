@@ -80,6 +80,7 @@
         "phpmd/phpmd": "^2.10",
         "phpstan/phpstan": "^1.1",
         "phpstan/phpstan-doctrine": "^1.0",
-        "phpstan/phpstan-symfony": "^1.0"
+        "phpstan/phpstan-symfony": "^1.0",
+        "sebastian/phpcpd": "^6.0"
     }
 }
