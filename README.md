@@ -40,6 +40,9 @@ Lancer les outils d'analyse statique :
 make analyse
 ```
 
+# Contribuer
+Veuillez prendre un moment pour lire le [guide sur la contribution](CONTRIBUTING.md).
+
 # À propos
 l'Api Mangatheque a été conçu initialement par [shooter-dev](https://github.com/shooter-dev).
 Si vous avez le moindre question, contactez [shooter-dev](mailto:vincentbleach@gmail.com?subject=[Github]%20Api%20Mangatheque)
