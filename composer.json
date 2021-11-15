@@ -12,6 +12,7 @@
         "api-platform/core": "^2.6",
         "doctrine/annotations": "^1.0",
         "doctrine/doctrine-bundle": "^2.4",
+        "doctrine/doctrine-fixtures-bundle": "^3.4",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.10",
         "nelmio/cors-bundle": "^2.1",
