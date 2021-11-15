@@ -129,6 +129,9 @@
     "phpstan/phpstan": {
         "version": "1.1.2"
     },
+    "phpstan/phpstan-doctrine": {
+        "version": "1.0.1"
+    },
     "psr/cache": {
         "version": "2.0.0"
     },
