@@ -149,4 +149,49 @@ final class PublisherTest extends WebTestCase
         $this->assertEquals(true, $publisher->isClosed());
         $this->assertEquals(true, $publisher->isNoAmazone());
     }
+
+    public function testIfPublisherIsDeleted(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $publisher = new Publisher();
+        $publisher->setTitle('publisher+100');
+        $publisher->setClosed(false);
+        $publisher->setNoAmazone(false);
+        $entityManager->persist($publisher);
+        $entityManager->flush();
+
+        /** @var AdminUrlGenerator $adminUrlGenerator */
+        $adminUrlGenerator = $client->getContainer()->get(AdminUrlGenerator::class);
+
+        $client->loginUser($entityManager->find(Administrator::class, 1), 'admin');
+
+        $crawler = $client->request(
+            'GET',
+            $adminUrlGenerator
+                ->setController(PublisherCrudController::class)
+                ->setAction(Action::DETAIL)
+                ->setEntityId($publisher->getId())
+                ->generateUrl()
+        );
+
+        $client->request(
+            'POST',
+            $adminUrlGenerator
+                ->setController(PublisherCrudController::class)
+                ->setAction(Action::DELETE)
+                ->setEntityId($publisher->getId())
+                ->generateUrl(),
+            ['token' => $crawler->filter('form#delete-form input')->attr('value')]
+        );
+
+        $this->assertResponseRedirects();
+
+        $client->followRedirect();
+
+        $this->assertNull($entityManager->find(Publisher::class, $publisher->getId()));
+    }
 }
