@@ -19,6 +19,8 @@ final class UserFixtures extends Fixture
     {
         $user = new User();
         $user->setEmail('user+1@email.com');
+        $user->setFirstName('Shooter');
+        $user->setLastName('Dev');
         $user->setPassword($this->userPasswordHasher->hashPassword($user, 'password'));
         $manager->persist($user);
         $manager->flush();
