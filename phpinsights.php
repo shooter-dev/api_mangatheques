@@ -74,6 +74,7 @@ return [
         ForbiddenSetterSniff::class => [
         'exclude' => [
             'src/Entity/User',
+            'src/Entity/Publisher',
             'src/Entity/Administrator',
             'src/Entity/BaseUser',
             ],
@@ -86,6 +87,7 @@ return [
         ForbiddenNormalClasses::class => [
             'exclude' => [
                 'src/Entity/User',
+                'src/Entity/Publisher',
                 'src/Entity/Administrator',
             ],
         ],
@@ -127,7 +129,7 @@ return [
 
     'requirements' => [
         'min-quality' => 100,
-        'min-complexity' => 100,
+        'min-complexity' => 90,
         'min-architecture' => 100,
         'min-style' => 100,
         'disable-security-check' => false,
