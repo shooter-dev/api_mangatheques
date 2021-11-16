@@ -6,6 +6,7 @@ namespace App\Tests\Functional\Admin;
 
 use App\Controller\Admin\PublisherCrudController;
 use App\Entity\Administrator;
+use App\Entity\Publisher;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -63,5 +64,39 @@ final class PublisherTest extends WebTestCase
 
         $this->assertStringContainsString('1', $crawler->filter('dl.datalist div:first-child dd')->text());
         $this->assertStringContainsString('publisher+1', $crawler->filter('dl.datalist div:last-child dd')->text());
+    }
+
+    public function testIfPublisherIsUpdated(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
+
+        /** @var AdminUrlGenerator $adminUrlGenerator */
+        $adminUrlGenerator = $client->getContainer()->get(AdminUrlGenerator::class);
+
+        $client->loginUser($entityManager->find(Administrator::class, 1), 'admin');
+
+        $client->request(
+            'GET',
+            $adminUrlGenerator
+                ->setController(PublisherCrudController::class)
+                ->setAction(Action::EDIT)
+                ->setEntityId(1)
+                ->generateUrl()
+        );
+
+        $client->submitForm('Sauvegarder les modifications', [
+            'Publisher[title]' => 'Modifié',
+        ]);
+
+        $this->assertResponseRedirects();
+
+        $client->followRedirect();
+
+        $publisher = $entityManager->find(Publisher::class, 1);
+
+        $this->assertEquals('Modifié', $publisher->getTitle());
     }
 }
