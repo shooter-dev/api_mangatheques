@@ -6,6 +6,9 @@ use NunoMaduro\PhpInsights\Domain\Insights\CyclomaticComplexityIsHigh;
 use NunoMaduro\PhpInsights\Domain\Insights\ForbiddenNormalClasses;
 use NunoMaduro\PhpInsights\Domain\Sniffs\ForbiddenSetterSniff;
 use PHP_CodeSniffer\Standards\Generic\Sniffs\Files\LineLengthSniff;
+use PhpCsFixer\Fixer\ReturnNotation\ReturnAssignmentFixer;
+use SlevomatCodingStandard\Sniffs\Functions\UnusedParameterSniff;
+use SlevomatCodingStandard\Sniffs\TypeHints\ParameterTypeHintSniff;
 
 return [
     /*
@@ -84,6 +87,21 @@ return [
         ],
         CyclomaticComplexityIsHigh::class => [
             'maxComplexity' => 4,
+        ],
+        UnusedParameterSniff::class => [
+            'exclude' => [
+                'src/DataPersister/UserDataPersister.php',
+            ],
+        ],
+        ReturnAssignmentFixer::class => [
+            'exclude' => [
+                'src/DataPersister/UserDataPersister.php',
+            ],
+        ],
+        ParameterTypeHintSniff::class => [
+            'exclude' => [
+                'src/DataPersister/UserDataPersister.php',
+            ],
         ],
     ],
 
