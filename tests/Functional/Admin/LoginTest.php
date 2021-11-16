@@ -28,6 +28,5 @@ final class LoginTest extends WebTestCase
         $client->followRedirect();
 
         $this->assertRouteSame('admin_dashboard');
-
     }
 }
