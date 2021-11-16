@@ -102,6 +102,7 @@ return [
         UnusedParameterSniff::class => [
             'exclude' => [
                 'src/DataPersister/UserDataPersister.php',
+                'src/Controller/Admin/PublisherCrudController.php',
             ],
         ],
         ReturnAssignmentFixer::class => [
