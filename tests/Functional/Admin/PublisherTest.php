@@ -62,8 +62,22 @@ final class PublisherTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
 
-        $this->assertStringContainsString('1', $crawler->filter('dl.datalist div:first-child dd')->text());
-        $this->assertStringContainsString('publisher+1', $crawler->filter('dl.datalist div:last-child dd')->text());
+        $this->assertStringContainsString(
+            '1',
+            $crawler->filter('dl.datalist div:first-child dd')->text()
+        );
+        $this->assertStringContainsString(
+            'publisher+1',
+            $crawler->filter('dl.datalist div:nth-child(2) dd')->text()
+        );
+        $this->assertStringContainsString(
+            'Non',
+            $crawler->filter('dl.datalist div:nth-child(3) dd')->text()
+        );
+        $this->assertStringContainsString(
+            'Non',
+            $crawler->filter('dl.datalist div:nth-child(4) dd')->text()
+        );
     }
 
     public function testIfPublisherIsUpdated(): void
@@ -98,5 +112,41 @@ final class PublisherTest extends WebTestCase
         $publisher = $entityManager->find(Publisher::class, 1);
 
         $this->assertEquals('Modifié', $publisher->getTitle());
+    }
+
+    public function testIfPublisherIsCreated(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
+
+        /** @var AdminUrlGenerator $adminUrlGenerator */
+        $adminUrlGenerator = $client->getContainer()->get(AdminUrlGenerator::class);
+
+        $client->loginUser($entityManager->find(Administrator::class, 1), 'admin');
+
+        $client->request(
+            'GET',
+            $adminUrlGenerator
+                ->setController(PublisherCrudController::class)
+                ->setAction(Action::NEW)
+                ->generateUrl()
+        );
+
+        $client->submitForm('Créer', [
+            'Publisher[title]' => 'publisher+10',
+            'Publisher[closed]' => true,
+            'Publisher[noAmazone]' => true,
+        ]);
+
+        $this->assertResponseRedirects();
+
+        $client->followRedirect();
+        /** @var Publisher $publisher */
+        $publisher = $entityManager->getRepository(Publisher::class)->findBy([], ['id' => 'desc'])[0];
+        $this->assertEquals('publisher+10', $publisher->getTitle());
+        $this->assertEquals(true, $publisher->isClosed());
+        $this->assertEquals(true, $publisher->isNoAmazone());
     }
 }
