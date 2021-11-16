@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -12,7 +13,16 @@ use Doctrine\ORM\Mapping\Table;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
+#[ApiResource(
+    collectionOperations: [
+        'post' => [
+            'security' => "is_granted('PUBLIC_ACCESS')",
+        ],
+    ],
+    itemOperations: ['get'],
+)]
 #[Entity]
 #[Table(name: 'user')]
 #[UniqueEntity(fields: 'email')]
@@ -21,13 +31,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Id]
     #[Column(type: 'integer')]
     #[GeneratedValue]
-    private ?int $id = null;
+    protected ?int $id = null;
 
     #[Column(unique: true)]
-    private string $email;
+    protected string $email;
 
     #[Column]
-    private string $password;
+    protected string $password;
+
+    #[Column]
+    #[NotBlank]
+    protected string $firstName;
+
+    #[Column]
+    #[NotBlank]
+    protected string $lastName;
 
     public function getId(): ?int
     {
@@ -52,6 +70,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): void
     {
         $this->password = $password;
+    }
+
+    public function getFirstName(): string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(string $firstName): void
+    {
+        $this->firstName = $firstName;
+    }
+
+    public function getLastName(): string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(string $lastName): void
+    {
+        $this->lastName = $lastName;
     }
 
     /**
