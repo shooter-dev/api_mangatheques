@@ -137,4 +137,47 @@ final class KindTest extends WebTestCase
         $kind = $entityManager->getRepository(Kind::class)->findBy([], ['id' => 'desc'])[0];
         $this->assertEquals('kind+10', $kind->getTitle());
     }
+
+    public function testIfKindIsDeleted(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $kind = new Kind();
+        $kind->setTitle('kind+100');
+        $entityManager->persist($kind);
+        $entityManager->flush();
+
+        /** @var AdminUrlGenerator $adminUrlGenerator */
+        $adminUrlGenerator = $client->getContainer()->get(AdminUrlGenerator::class);
+
+        $client->loginUser($entityManager->find(Administrator::class, 1), 'admin');
+
+        $crawler = $client->request(
+            'GET',
+            $adminUrlGenerator
+                ->setController(KindCrudController::class)
+                ->setAction(Action::DETAIL)
+                ->setEntityId($kind->getId())
+                ->generateUrl()
+        );
+
+        $client->request(
+            'POST',
+            $adminUrlGenerator
+                ->setController(KindCrudController::class)
+                ->setAction(Action::DELETE)
+                ->setEntityId($kind->getId())
+                ->generateUrl(),
+            ['token' => $crawler->filter('form#delete-form input')->attr('value')]
+        );
+
+        $this->assertResponseRedirects();
+
+        $client->followRedirect();
+
+        $this->assertNull($entityManager->find(Kind::class, $kind->getId()));
+    }
 }
