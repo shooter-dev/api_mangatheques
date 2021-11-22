@@ -75,6 +75,7 @@ return [
         'exclude' => [
             'src/Entity/User',
             'src/Entity/Publisher',
+            'src/Entity/Author',
             'src/Entity/Administrator',
             'src/Entity/BaseUser',
             ],
@@ -88,6 +89,7 @@ return [
             'exclude' => [
                 'src/Entity/User',
                 'src/Entity/Publisher',
+                'src/Entity/Author',
                 'src/Entity/Administrator',
             ],
         ],
