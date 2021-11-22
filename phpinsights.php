@@ -111,6 +111,7 @@ return [
                 'src/Controller/Admin/PublisherCrudController.php',
                 'src/Controller/Admin/AuthorCrudController.php',
                 'src/Controller/Admin/KindCrudController.php',
+                'src/Controller/Admin/GenreCrudController.php',
             ],
         ],
         ReturnAssignmentFixer::class => [
