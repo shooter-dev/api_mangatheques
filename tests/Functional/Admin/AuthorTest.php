@@ -110,4 +110,38 @@ final class AuthorTest extends WebTestCase
         $this->assertEquals('Modifié', $author->getLastName());
         $this->assertEquals('Modifié', $author->getFirstName());
     }
+
+    public function testIfAuthorIsCreated(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
+
+        /** @var AdminUrlGenerator $adminUrlGenerator */
+        $adminUrlGenerator = $client->getContainer()->get(AdminUrlGenerator::class);
+
+        $client->loginUser($entityManager->find(Administrator::class, 1), 'admin');
+
+        $client->request(
+            'GET',
+            $adminUrlGenerator
+                ->setController(AuthorCrudController::class)
+                ->setAction(Action::NEW)
+                ->generateUrl()
+        );
+
+        $client->submitForm('Créer', [
+            'Author[firstName]' => 'first_name+10',
+            'Author[lastName]' => 'last_name+10',
+        ]);
+
+        $this->assertResponseRedirects();
+
+        $client->followRedirect();
+        /** @var Author $author */
+        $author = $entityManager->getRepository(Author::class)->findBy([], ['id' => 'desc'])[0];
+        $this->assertEquals('last_name+10', $author->getLastName());
+        $this->assertEquals('first_name+10', $author->getFirstName());
+    }
 }
