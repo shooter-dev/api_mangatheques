@@ -36,4 +36,41 @@ final class AuthorTest extends WebTestCase
 
         $this->assertCount(9, $crawler->filter('article.content table tbody tr'));
     }
+
+    public function testIfAuthorIsShown(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
+
+        /** @var AdminUrlGenerator $adminUrlGenerator */
+        $adminUrlGenerator = $client->getContainer()->get(AdminUrlGenerator::class);
+
+        $client->loginUser($entityManager->find(Administrator::class, 1), 'admin');
+
+        $crawler = $client->request(
+            'GET',
+            $adminUrlGenerator
+                ->setController(AuthorCrudController::class)
+                ->setAction(Action::DETAIL)
+                ->setEntityId(1)
+                ->generateUrl()
+        );
+
+        $this->assertResponseIsSuccessful();
+
+        $this->assertStringContainsString(
+            '1',
+            $crawler->filter('dl.datalist div:first-child dd')->text()
+        );
+        $this->assertStringContainsString(
+            'last_name+1',
+            $crawler->filter('dl.datalist div:nth-child(2) dd')->text()
+        );
+        $this->assertStringContainsString(
+            'first_name+1',
+            $crawler->filter('dl.datalist div:nth-child(3) dd')->text()
+        );
+    }
 }
