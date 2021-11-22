@@ -76,6 +76,7 @@ return [
             'src/Entity/User',
             'src/Entity/Publisher',
             'src/Entity/Author',
+            'src/Entity/Kind',
             'src/Entity/Administrator',
             'src/Entity/BaseUser',
             ],
@@ -90,6 +91,7 @@ return [
                 'src/Entity/User',
                 'src/Entity/Publisher',
                 'src/Entity/Author',
+                'src/Entity/Kind',
                 'src/Entity/Administrator',
             ],
         ],
@@ -106,6 +108,7 @@ return [
                 'src/DataPersister/UserDataPersister.php',
                 'src/Controller/Admin/PublisherCrudController.php',
                 'src/Controller/Admin/AuthorCrudController.php',
+                'src/Controller/Admin/KindCrudController.php',
             ],
         ],
         ReturnAssignmentFixer::class => [
