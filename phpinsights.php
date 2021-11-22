@@ -77,6 +77,7 @@ return [
             'src/Entity/Publisher',
             'src/Entity/Author',
             'src/Entity/Kind',
+            'src/Entity/Genre',
             'src/Entity/Administrator',
             'src/Entity/BaseUser',
             ],
@@ -92,6 +93,7 @@ return [
                 'src/Entity/Publisher',
                 'src/Entity/Author',
                 'src/Entity/Kind',
+                'src/Entity/Genre',
                 'src/Entity/Administrator',
             ],
         ],
@@ -109,6 +111,7 @@ return [
                 'src/Controller/Admin/PublisherCrudController.php',
                 'src/Controller/Admin/AuthorCrudController.php',
                 'src/Controller/Admin/KindCrudController.php',
+                'src/Controller/Admin/GenreCrudController.php',
             ],
         ],
         ReturnAssignmentFixer::class => [
