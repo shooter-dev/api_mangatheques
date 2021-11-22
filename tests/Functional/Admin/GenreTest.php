@@ -137,4 +137,47 @@ final class GenreTest extends WebTestCase
         $genre = $entityManager->getRepository(Genre::class)->findBy([], ['id' => 'desc'])[0];
         $this->assertEquals('genre+10', $genre->getTitle());
     }
+
+    public function testIfGenreIsDeleted(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $genre = new Genre();
+        $genre->setTitle('genre+100');
+        $entityManager->persist($genre);
+        $entityManager->flush();
+
+        /** @var AdminUrlGenerator $adminUrlGenerator */
+        $adminUrlGenerator = $client->getContainer()->get(AdminUrlGenerator::class);
+
+        $client->loginUser($entityManager->find(Administrator::class, 1), 'admin');
+
+        $crawler = $client->request(
+            'GET',
+            $adminUrlGenerator
+                ->setController(GenreCrudController::class)
+                ->setAction(Action::DETAIL)
+                ->setEntityId($genre->getId())
+                ->generateUrl()
+        );
+
+        $client->request(
+            'POST',
+            $adminUrlGenerator
+                ->setController(GenreCrudController::class)
+                ->setAction(Action::DELETE)
+                ->setEntityId($genre->getId())
+                ->generateUrl(),
+            ['token' => $crawler->filter('form#delete-form input')->attr('value')]
+        );
+
+        $this->assertResponseRedirects();
+
+        $client->followRedirect();
+
+        $this->assertNull($entityManager->find(Genre::class, $genre->getId()));
+    }
 }
