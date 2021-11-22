@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Entity\Author;
 use App\Entity\Publisher;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -31,6 +32,9 @@ final class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linktoDashboard('Dashboard', 'fa fa-home');
+
         yield MenuItem::linkToCrud('Publishers', 'fa fa-picture-o', Publisher::class);
+
+        yield MenuItem::linkToCrud('Authors', 'fa fa-user-o', Author::class);
     }
 }

@@ -105,6 +105,7 @@ return [
             'exclude' => [
                 'src/DataPersister/UserDataPersister.php',
                 'src/Controller/Admin/PublisherCrudController.php',
+                'src/Controller/Admin/AuthorCrudController.php',
             ],
         ],
         ReturnAssignmentFixer::class => [
