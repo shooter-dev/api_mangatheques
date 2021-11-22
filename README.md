@@ -1,6 +1,6 @@
 ![Mangatheque Api](logo.png)
 
-# Mangatheque Api (Django)
+# Mangatheque Api (Symfony)
 
 # Installation
 Dans un premier temps, cloner le repository:
