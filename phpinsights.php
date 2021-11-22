@@ -75,6 +75,7 @@ return [
         'exclude' => [
             'src/Entity/User',
             'src/Entity/Publisher',
+            'src/Entity/Author',
             'src/Entity/Administrator',
             'src/Entity/BaseUser',
             ],
@@ -88,6 +89,7 @@ return [
             'exclude' => [
                 'src/Entity/User',
                 'src/Entity/Publisher',
+                'src/Entity/Author',
                 'src/Entity/Administrator',
             ],
         ],
@@ -103,6 +105,7 @@ return [
             'exclude' => [
                 'src/DataPersister/UserDataPersister.php',
                 'src/Controller/Admin/PublisherCrudController.php',
+                'src/Controller/Admin/AuthorCrudController.php',
             ],
         ],
         ReturnAssignmentFixer::class => [
