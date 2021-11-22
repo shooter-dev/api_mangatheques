@@ -105,4 +105,36 @@ final class GenreTest extends WebTestCase
 
         $this->assertEquals('Modifié', $genre->getTitle());
     }
+
+    public function testIfGenreIsCreated(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
+
+        /** @var AdminUrlGenerator $adminUrlGenerator */
+        $adminUrlGenerator = $client->getContainer()->get(AdminUrlGenerator::class);
+
+        $client->loginUser($entityManager->find(Administrator::class, 1), 'admin');
+
+        $client->request(
+            'GET',
+            $adminUrlGenerator
+                ->setController(GenreCrudController::class)
+                ->setAction(Action::NEW)
+                ->generateUrl()
+        );
+
+        $client->submitForm('Créer', [
+            'Genre[title]' => 'genre+10',
+        ]);
+
+        $this->assertResponseRedirects();
+
+        $client->followRedirect();
+        /** @var Genre $genre */
+        $genre = $entityManager->getRepository(Genre::class)->findBy([], ['id' => 'desc'])[0];
+        $this->assertEquals('genre+10', $genre->getTitle());
+    }
 }
