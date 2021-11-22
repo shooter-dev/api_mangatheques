@@ -144,4 +144,48 @@ final class AuthorTest extends WebTestCase
         $this->assertEquals('last_name+10', $author->getLastName());
         $this->assertEquals('first_name+10', $author->getFirstName());
     }
+
+    public function testIfAuthorIsDeleted(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $author = new Author();
+        $author->setFirstName('first_name+100');
+        $author->setLastName('last_name+100');
+        $entityManager->persist($author);
+        $entityManager->flush();
+
+        /** @var AdminUrlGenerator $adminUrlGenerator */
+        $adminUrlGenerator = $client->getContainer()->get(AdminUrlGenerator::class);
+
+        $client->loginUser($entityManager->find(Administrator::class, 1), 'admin');
+
+        $crawler = $client->request(
+            'GET',
+            $adminUrlGenerator
+                ->setController(AuthorCrudController::class)
+                ->setAction(Action::DETAIL)
+                ->setEntityId($author->getId())
+                ->generateUrl()
+        );
+
+        $client->request(
+            'POST',
+            $adminUrlGenerator
+                ->setController(AuthorCrudController::class)
+                ->setAction(Action::DELETE)
+                ->setEntityId($author->getId())
+                ->generateUrl(),
+            ['token' => $crawler->filter('form#delete-form input')->attr('value')]
+        );
+
+        $this->assertResponseRedirects();
+
+        $client->followRedirect();
+
+        $this->assertNull($entityManager->find(Author::class, $author->getId()));
+    }
 }
