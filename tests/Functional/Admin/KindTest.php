@@ -105,4 +105,36 @@ final class KindTest extends WebTestCase
 
         $this->assertEquals('Modifié', $kind->getTitle());
     }
+
+    public function testIfKindIsCreated(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
+
+        /** @var AdminUrlGenerator $adminUrlGenerator */
+        $adminUrlGenerator = $client->getContainer()->get(AdminUrlGenerator::class);
+
+        $client->loginUser($entityManager->find(Administrator::class, 1), 'admin');
+
+        $client->request(
+            'GET',
+            $adminUrlGenerator
+                ->setController(KindCrudController::class)
+                ->setAction(Action::NEW)
+                ->generateUrl()
+        );
+
+        $client->submitForm('Créer', [
+            'Kind[title]' => 'kind+10',
+        ]);
+
+        $this->assertResponseRedirects();
+
+        $client->followRedirect();
+        /** @var Kind $kind */
+        $kind = $entityManager->getRepository(Kind::class)->findBy([], ['id' => 'desc'])[0];
+        $this->assertEquals('kind+10', $kind->getTitle());
+    }
 }
