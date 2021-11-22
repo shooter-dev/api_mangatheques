@@ -23,8 +23,8 @@ final class KindCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('Publisher')
-            ->setEntityLabelInPlural('Publishers')
+            ->setEntityLabelInSingular('Kind')
+            ->setEntityLabelInPlural('Kinds')
             ->setDefaultSort(['title' => 'ASC']);
     }
 
