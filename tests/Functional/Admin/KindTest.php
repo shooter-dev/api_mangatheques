@@ -6,6 +6,7 @@ namespace App\Tests\Functional\Admin;
 
 use App\Controller\Admin\KindCrudController;
 use App\Entity\Administrator;
+use App\Entity\Kind;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -69,5 +70,39 @@ final class KindTest extends WebTestCase
             'kind+1',
             $crawler->filter('dl.datalist div:nth-child(2) dd')->text()
         );
+    }
+
+    public function testIfKindIsUpdated(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
+
+        /** @var AdminUrlGenerator $adminUrlGenerator */
+        $adminUrlGenerator = $client->getContainer()->get(AdminUrlGenerator::class);
+
+        $client->loginUser($entityManager->find(Administrator::class, 1), 'admin');
+
+        $client->request(
+            'GET',
+            $adminUrlGenerator
+                ->setController(KindCrudController::class)
+                ->setAction(Action::EDIT)
+                ->setEntityId(1)
+                ->generateUrl()
+        );
+
+        $client->submitForm('Sauvegarder les modifications', [
+            'Kind[title]' => 'Modifié',
+        ]);
+
+        $this->assertResponseRedirects();
+
+        $client->followRedirect();
+
+        $kind = $entityManager->find(Kind::class, 1);
+
+        $this->assertEquals('Modifié', $kind->getTitle());
     }
 }
