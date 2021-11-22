@@ -108,6 +108,7 @@ return [
                 'src/DataPersister/UserDataPersister.php',
                 'src/Controller/Admin/PublisherCrudController.php',
                 'src/Controller/Admin/AuthorCrudController.php',
+                'src/Controller/Admin/KindCrudController.php',
             ],
         ],
         ReturnAssignmentFixer::class => [
