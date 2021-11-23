@@ -9,6 +9,7 @@ use App\Entity\Genre;
 use App\Entity\Job;
 use App\Entity\Kind;
 use App\Entity\Publisher;
+use App\Entity\Serie;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Menu\MenuItemInterface;
@@ -45,5 +46,7 @@ final class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Genre', 'fa fa-bookmark-o', Genre::class);
 
         yield MenuItem::linkToCrud('Job', 'fas fa-briefcase', Job::class);
+
+        yield MenuItem::linkToCrud('Serie', 'fa fa-clone', Serie::class);
     }
 }
