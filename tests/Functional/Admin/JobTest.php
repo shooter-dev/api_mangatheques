@@ -137,4 +137,47 @@ final class JobTest extends WebTestCase
         $job = $entityManager->getRepository(Job::class)->findBy([], ['id' => 'desc'])[0];
         $this->assertEquals('job+10', $job->getTitle());
     }
+
+    public function testIfJobIsDeleted(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $job = new Job();
+        $job->setTitle('job+100');
+        $entityManager->persist($job);
+        $entityManager->flush();
+
+        /** @var AdminUrlGenerator $adminUrlGenerator */
+        $adminUrlGenerator = $client->getContainer()->get(AdminUrlGenerator::class);
+
+        $client->loginUser($entityManager->find(Administrator::class, 1), 'admin');
+
+        $crawler = $client->request(
+            'GET',
+            $adminUrlGenerator
+                ->setController(JobCrudController::class)
+                ->setAction(Action::DETAIL)
+                ->setEntityId($job->getId())
+                ->generateUrl()
+        );
+
+        $client->request(
+            'POST',
+            $adminUrlGenerator
+                ->setController(JobCrudController::class)
+                ->setAction(Action::DELETE)
+                ->setEntityId($job->getId())
+                ->generateUrl(),
+            ['token' => $crawler->filter('form#delete-form input')->attr('value')]
+        );
+
+        $this->assertResponseRedirects();
+
+        $client->followRedirect();
+
+        $this->assertNull($entityManager->find(Job::class, $job->getId()));
+    }
 }
