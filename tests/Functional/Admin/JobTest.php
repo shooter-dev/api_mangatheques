@@ -105,4 +105,36 @@ final class JobTest extends WebTestCase
 
         $this->assertEquals('Modifié', $job->getTitle());
     }
+
+    public function testIfJobIsCreated(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
+
+        /** @var AdminUrlGenerator $adminUrlGenerator */
+        $adminUrlGenerator = $client->getContainer()->get(AdminUrlGenerator::class);
+
+        $client->loginUser($entityManager->find(Administrator::class, 1), 'admin');
+
+        $client->request(
+            'GET',
+            $adminUrlGenerator
+                ->setController(JobCrudController::class)
+                ->setAction(Action::NEW)
+                ->generateUrl()
+        );
+
+        $client->submitForm('Créer', [
+            'Job[title]' => 'job+10',
+        ]);
+
+        $this->assertResponseRedirects();
+
+        $client->followRedirect();
+        /** @var Job $job */
+        $job = $entityManager->getRepository(Job::class)->findBy([], ['id' => 'desc'])[0];
+        $this->assertEquals('job+10', $job->getTitle());
+    }
 }
