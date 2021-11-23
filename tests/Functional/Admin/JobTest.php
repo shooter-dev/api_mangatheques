@@ -6,6 +6,7 @@ namespace App\Tests\Functional\Admin;
 
 use App\Controller\Admin\JobCrudController;
 use App\Entity\Administrator;
+use App\Entity\Job;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -69,5 +70,39 @@ final class JobTest extends WebTestCase
             'job+1',
             $crawler->filter('dl.datalist div:nth-child(2) dd')->text()
         );
+    }
+
+    public function testIfJobIsUpdated(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
+
+        /** @var AdminUrlGenerator $adminUrlGenerator */
+        $adminUrlGenerator = $client->getContainer()->get(AdminUrlGenerator::class);
+
+        $client->loginUser($entityManager->find(Administrator::class, 1), 'admin');
+
+        $client->request(
+            'GET',
+            $adminUrlGenerator
+                ->setController(JobCrudController::class)
+                ->setAction(Action::EDIT)
+                ->setEntityId(1)
+                ->generateUrl()
+        );
+
+        $client->submitForm('Sauvegarder les modifications', [
+            'Job[title]' => 'Modifié',
+        ]);
+
+        $this->assertResponseRedirects();
+
+        $client->followRedirect();
+
+        $job = $entityManager->find(Job::class, 1);
+
+        $this->assertEquals('Modifié', $job->getTitle());
     }
 }
