@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Author;
 use App\Entity\Genre;
+use App\Entity\Job;
 use App\Entity\Kind;
 use App\Entity\Publisher;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -42,5 +43,7 @@ final class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Kind', 'fa fa-bookmark-o', Kind::class);
 
         yield MenuItem::linkToCrud('Genre', 'fa fa-bookmark-o', Genre::class);
+
+        yield MenuItem::linkToCrud('Job', 'fas fa-briefcase', Job::class);
     }
 }
