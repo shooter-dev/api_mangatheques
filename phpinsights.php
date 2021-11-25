@@ -79,6 +79,7 @@ return [
             'src/Entity/Kind',
             'src/Entity/Genre',
             'src/Entity/Job',
+            'src/Entity/Serie',
             'src/Entity/Administrator',
             'src/Entity/BaseUser',
             ],
@@ -96,6 +97,7 @@ return [
                 'src/Entity/Kind',
                 'src/Entity/Genre',
                 'src/Entity/Job',
+                'src/Entity/Serie',
                 'src/Entity/Administrator',
             ],
         ],
@@ -115,6 +117,7 @@ return [
                 'src/Controller/Admin/KindCrudController.php',
                 'src/Controller/Admin/GenreCrudController.php',
                 'src/Controller/Admin/JobCrudController.php',
+                'src/Controller/Admin/SerieCrudController.php',
             ],
         ],
         ReturnAssignmentFixer::class => [
