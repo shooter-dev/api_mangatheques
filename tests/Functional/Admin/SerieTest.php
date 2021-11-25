@@ -6,6 +6,7 @@ namespace App\Tests\Functional\Admin;
 
 use App\Controller\Admin\SerieCrudController;
 use App\Entity\Administrator;
+use App\Entity\Serie;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -78,5 +79,39 @@ final class SerieTest extends WebTestCase
             'Non', $crawler->filter(
             'dl.datalist div:nth-child(3) dd')->text()
         );
+    }
+
+    public function testIfSerieIsUpdated(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
+
+        /** @var AdminUrlGenerator $adminUrlGenerator */
+        $adminUrlGenerator = $client->getContainer()->get(AdminUrlGenerator::class);
+
+        $client->loginUser($entityManager->find(Administrator::class, 1), 'admin');
+
+        $client->request(
+            'GET',
+            $adminUrlGenerator
+                ->setController(SerieCrudController::class)
+                ->setAction(Action::EDIT)
+                ->setEntityId(1)
+                ->generateUrl()
+        );
+
+        $client->submitForm('Sauvegarder les modifications', [
+            'Serie[title]' => 'Modifié',
+        ]);
+
+        $this->assertResponseRedirects();
+
+        $client->followRedirect();
+
+        $serie = $entityManager->find(Serie::class, 1);
+
+        $this->assertEquals('Modifié', $serie->getTitle());
     }
 }
