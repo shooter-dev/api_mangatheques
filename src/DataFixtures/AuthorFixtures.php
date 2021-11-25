@@ -18,13 +18,13 @@ final class AuthorFixtures extends Fixture
         $manager->flush();
     }
 
-    private function addPublisher(string $lastName, string $firstName, int $i): Author
+    private function addPublisher(string $lastName, string $firstName, int $pk): Author
     {
         $author = new Author();
         $author->setLastName($lastName);
         $author->setFirstName($firstName);
 
-        $this->addReference('author+'.$i, $author);
+        $this->addReference('author+'.$pk, $author);
 
         return $author;
     }
