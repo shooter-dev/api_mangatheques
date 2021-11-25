@@ -114,4 +114,39 @@ final class SerieTest extends WebTestCase
 
         $this->assertEquals('Modifié', $serie->getTitle());
     }
+
+    public function testIfSerieIsCreated(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
+
+        /** @var AdminUrlGenerator $adminUrlGenerator */
+        $adminUrlGenerator = $client->getContainer()->get(AdminUrlGenerator::class);
+
+        $client->loginUser($entityManager->find(Administrator::class, 1), 'admin');
+
+        $client->request(
+            'GET',
+            $adminUrlGenerator
+                ->setController(SerieCrudController::class)
+                ->setAction(Action::NEW)
+                ->generateUrl()
+        );
+        /** @var bool $valBool */
+        $valBool = boolval(rand(0, 1));
+        $client->submitForm('Créer', [
+            'Serie[title]' => 'serie+10',
+            'Serie[adulteContent]' => $valBool,
+        ]);
+
+        $this->assertResponseRedirects();
+
+        $client->followRedirect();
+        /** @var Serie $serie */
+        $serie = $entityManager->getRepository(Serie::class)->findBy([], ['id' => 'desc'])[0];
+        $this->assertEquals('serie+10', $serie->getTitle());
+        $this->assertEquals($valBool, $serie->isAdulteContent());
+    }
 }
