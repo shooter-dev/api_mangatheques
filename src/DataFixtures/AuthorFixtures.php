@@ -13,18 +13,18 @@ final class AuthorFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         for ($i = 1; $i < 10; ++$i) {
-            $manager->persist($this->addPublisher('last_name+'.$i, 'first_name+'.$i));
+            $manager->persist($this->addPublisher('last_name+'.$i, 'first_name+'.$i, $i));
         }
         $manager->flush();
     }
 
-    private function addPublisher(string $lastName, string $firstName): Author
+    private function addPublisher(string $lastName, string $firstName, int $i): Author
     {
         $author = new Author();
         $author->setLastName($lastName);
         $author->setFirstName($firstName);
 
-        $this->addReference($lastName.'_'.$firstName, $author);
+        $this->addReference('author+'.$i, $author);
 
         return $author;
     }
