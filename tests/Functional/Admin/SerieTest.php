@@ -149,4 +149,51 @@ final class SerieTest extends WebTestCase
         $this->assertEquals('serie+10', $serie->getTitle());
         $this->assertEquals($valBool, $serie->isAdulteContent());
     }
+
+    public function testIfSerieIsDeleted(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
+
+        /** @var bool $valBool */
+        $valBool = boolval(rand(0, 1));
+
+        $serie = new Serie();
+        $serie->setTitle('serie+100');
+        $serie->setAdulteContent($valBool);
+        $entityManager->persist($serie);
+        $entityManager->flush();
+
+        /** @var AdminUrlGenerator $adminUrlGenerator */
+        $adminUrlGenerator = $client->getContainer()->get(AdminUrlGenerator::class);
+
+        $client->loginUser($entityManager->find(Administrator::class, 1), 'admin');
+
+        $crawler = $client->request(
+            'GET',
+            $adminUrlGenerator
+                ->setController(SerieCrudController::class)
+                ->setAction(Action::DETAIL)
+                ->setEntityId($serie->getId())
+                ->generateUrl()
+        );
+
+        $client->request(
+            'POST',
+            $adminUrlGenerator
+                ->setController(SerieCrudController::class)
+                ->setAction(Action::DELETE)
+                ->setEntityId($serie->getId())
+                ->generateUrl(),
+            ['token' => $crawler->filter('form#delete-form input')->attr('value')]
+        );
+
+        $this->assertResponseRedirects();
+
+        $client->followRedirect();
+
+        $this->assertNull($entityManager->find(Serie::class, $serie->getId()));
+    }
 }
